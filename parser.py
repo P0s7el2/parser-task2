@@ -9,7 +9,6 @@ from sqlalchemy.orm import sessionmaker
 import aiohttp
 import os
 
-domain = 'http://facebook.com/'
 Base = declarative_base()
 
 
@@ -98,12 +97,12 @@ def get_url_text(url):
 
 def main():
     tic = time()
-    global domain
+    domain = 'http://test-pages:81/'
     # получаем все ссылки на сборки, в будущем может быть get_html
     for file in os.listdir("Users_pages"):
         if file.endswith(".html") and len(file) > 5:
             print(domain + file)
-            links = get_users(get_url_text(domain + file))
+            links = get_users(get_url_text(f'{domain}{file}'))
     # открываем ссесию
     #links = get_users(get_url_text(domain + '/Baba%20Alinko%20Hausa%20_%20Baba%20Aliou%20Sow%20_%20People%20Directory.html'))
     if links:
