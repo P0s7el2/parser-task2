@@ -9,8 +9,7 @@ from sqlalchemy.orm import sessionmaker
 import aiohttp
 import os
 
-
-domain = 'https://www.facebook.com/'
+domain = 'http://test-pages:81/'
 Base = declarative_base()
 
 
@@ -69,25 +68,24 @@ def get_users(html):
         print(links)
         # проходимся по найденным эл и находим там url и название,
         # вставляем в массив
-        info = {}
-        i = 0
+        info = []
+
         for a in links:
-            i += 1
             url = a['href']
             title = a.get_text()
             # формируем словарь с сылками
-            info[i] = [url, title]
+            info.append([url, title])
         return info
-    except Exception as e:
-        print(e)
+    except AttributeError:
+        print('error')
 
 
 def set_links_to_db(links, session):
     # добавляем пользователей
     print(links)
-    for id in links:
-        url = links[id][0]
-        name = links[id][1]
+    for item in links:
+        url = item[0]
+        name = item[1]
         session.add(User(name, url))
     # комитим
     session.commit()
@@ -102,14 +100,15 @@ def main():
     tic = time()
     global domain
     # получаем все ссылки на сборки, в будущем может быть get_html
-    # for file in os.listdir("C:\\Users\\P0s7el2\\Documents\\Python\\Parser sqlalchemy\\Users_pages"):
-    #     if file.endswith(".html") and len(file) > 5:
-    #         print(domain + file)
-    #         links = get_users(get_url_text(domain + file))
+    #for file in os.listdir("C:\\Users\\P0s7el2\\Documents\\Python\\Parser sqlalchemy\\Users_pages"):
+    #    if file.endswith(".html") and len(file) > 5:
+    #        print(domain + file)
+    #        links = get_users(get_url_text(domain + file))
     # открываем ссесию
-    links = get_users(get_url_text(domain + 'directory/people/S-4086364-4086428'))
-    session = start_db()
-    set_links_to_db(links, session)
+    links = get_users(get_url_text(domain + '/Baba%20Alinko%20Hausa%20_%20Baba%20Aliou%20Sow%20_%20People%20Directory.html'))
+    if links:
+        session = start_db()
+        set_links_to_db(links, session)
     toc = time()
 
     print(toc - tic)
